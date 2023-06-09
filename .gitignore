@@ -4,3 +4,4 @@
 .vscode/extensions.json
 .vscode/launch.json
 .vscode/ipch
+.pio/libdeps/esp32doit-devkit-v1/Unity
