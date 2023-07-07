@@ -2,7 +2,7 @@
 #define __TDSSENSOR_H__
 #include <Arduino.h>
 
-#define VREF 5.0      // analog reference voltage(Volt) of the ADC
+#define VREF 3.3     // analog reference voltage(Volt) of the ADC
 #define SUMOFPOINT  30           // sum of sample point
 class TdsSensor
 {
