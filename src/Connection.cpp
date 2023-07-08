@@ -54,7 +54,7 @@ void Connection::setupDNSserver(){
     interval = millis();
 }
 void Connection::setup(){
-    =();
+    setupWIFI();
     setupServer();
     setupWebsocket();
     setupDNSserver();

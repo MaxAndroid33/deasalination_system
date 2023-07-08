@@ -8,7 +8,7 @@ Connection connection;
 
 FlowSensor prioriFlow(27, calibrationFactorValue);
 FlowSensor subFlow(14, calibrationFactorValue);
-TdsSensor tds(12,25);
+TdsSensor tds(35,25);
 
 unsigned long currentMillis = millis();
 unsigned long previousMillis =currentMillis;
@@ -25,13 +25,13 @@ void increasePulseCountSubFlow()
 
 void updateMsg(){
     connection.broadcastIP();
-    connection.broadcastMsg(String(random(1,100)));
+    connection.broadcastMsg(String(tds.finalMeasure()));
 }
 void setup()
 {   
     Serial.begin(115200);;
 
-    // connection.setup();
+    connection.setup();
     prioriFlow.begin();
     subFlow.begin();
     attachInterrupt(digitalPinToInterrupt(prioriFlow.pin), increasePulseCountPrioriFlow, RISING);
@@ -43,34 +43,27 @@ void setup()
 
 void loop()
 {
-    // prioriFlow.flowRate();
-    // subFlow.flowRate();
-    // Serial.println("=================== Before =============");
-    // Serial.println(prioriFlow.flowRate());
-    // Serial.println(prioriFlow.literPassed());
-    // Serial.println("=================== after =============");
+    prioriFlow.flowRate();
+    subFlow.flowRate();
+    Serial.println("=================== Before =============");
+    Serial.println(prioriFlow.flowRate());
+    Serial.println(prioriFlow.literPassed());
+    Serial.println("=================== after =============");
 
-    // Serial.println(subFlow.flowRate());
-    // Serial.println(subFlow.literPassed()); 
-    // delay(1000);
+    Serial.println(subFlow.flowRate());
+    Serial.println(subFlow.literPassed()); 
+   
 
     Serial.print("TDS Value:");
     Serial.print(tds.finalMeasure(),0);
     Serial.println("ppm");
-    // Serial.print("Temp:");
-    // Serial.print(tds.temperature,0);
-    // Serial.println("C");
-    // currentMillis = millis();
-    // if(currentMillis >(previousMillis+15000)){
-    //     tds.temperature =25;
-    //     previousMillis =currentMillis;
-    // }
 
-    // connection.update();    
-    // if((millis() - connection.interval) > 2000)
-    // {   
-    //     updateMsg();
 
-    //     connection.interval = millis();
-    // }
+    connection.update();    
+    if((millis() - connection.interval) > 2000)
+    {   
+        updateMsg();
+
+        connection.interval = millis();
+    }
 }
