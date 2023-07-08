@@ -28,6 +28,13 @@ void Connection::setupServer(){
     String test = "hello";
     server.on("/", HTTP_GET, [this](AsyncWebServerRequest *request){
         request->send(200, "text/plain", this->message);
+  
+    });
+     server.on("/pos", HTTP_GET, [this](AsyncWebServerRequest *request){
+        
+        inputPostion = request->getParam("pos")->value().toInt();
+        request->send(200, "text/plain", "OK");
+  
     });
     server.onNotFound([](AsyncWebServerRequest *request) {
         String nfmsg = "Hello World!\n\n";

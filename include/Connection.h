@@ -36,7 +36,7 @@ public:
 
 
     String message = "Initial message";
-
+    int inputPostion=170;
     unsigned long interval;
     long num;
     String ipaddress;
