@@ -23,7 +23,7 @@ public:
 
     
     const char* ssid = "YourAPSSID";
-    const char* password = "YourAPPassword";
+    const char* password = "12345678";
 
     // const char* ssid = "Ak";
     // const char* password = "@AK@-12#";
