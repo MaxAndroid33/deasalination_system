@@ -1,26 +1,29 @@
 #include <Connection.h>
 
-Connection::Connection():apIP(8,8,4,4), server(80), websocket("/ws"){
-
+Connection::Connection(): server(80), websocket("/ws"){
+    //apIP(8,8,4,4) //TODO used to explain MDNS
 }
-void Connection::setupWIFI(){
-    // WiFi.begin(ssid, password);
-    // Serial.println("\nConnecting");
 
-    // while(WiFi.status() != WL_CONNECTED){
-    //     Serial.print(".");
-    //     delay(100);
-    // }
-    // IPAddress ip = WiFi.localIP();
-    // ipaddress = "HUB|"+ ip.toString();
-    // Serial.print("IP address: ");
-    // Serial.println(ipaddress);    
-    
+void Connection::setupAP()
+{
     WiFi.softAP(ssid, password);
     ip = WiFi.softAPIP();
-    ipaddress = "HUB|"+ ip.toString();
+    ipaddress = "HUB|" + ip.toString();
     Serial.print("AP IP address: ");
     Serial.println(ip);    
+}
+void Connection::setupWIFI(){
+    WiFi.begin(ssid, password);
+    Serial.println("\nConnecting");
+
+    while(WiFi.status() != WL_CONNECTED){
+        Serial.print(".");
+        delay(100);
+    }
+    IPAddress ip = WiFi.localIP();
+    ipaddress = "HUB|"+ ip.toString();
+    Serial.print("IP address: ");
+    Serial.println(ipaddress);
 }
 
 void Connection::setupServer(){
@@ -58,15 +61,20 @@ void Connection::setupWebsocket(){
 void Connection::setupDNSserver(){
     dnsServer.start(53, "*", ip);
     dnsServer.setErrorReplyCode(DNSReplyCode::ServerFailure);
-    interval = millis();
 }
-void Connection::setup(){
-    setupWIFI();
+void Connection::setup(bool isAccessPoint){
+
+    if(isAccessPoint)
+    {
+        setupAP();
+    }
+    else
+    {
+        setupWIFI();
+    }
     setupServer();
     setupWebsocket();
     setupDNSserver();
-
-    interval = millis();
 }
 
 void Connection::update(){

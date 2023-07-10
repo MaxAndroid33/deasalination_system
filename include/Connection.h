@@ -12,8 +12,7 @@
 #define UDP_PORT 54321
 
 class Connection{
-public:
-    IPAddress apIP;
+private:
     DNSServer dnsServer;
     WiFiUDP udp;
     IPAddress ip;
@@ -25,30 +24,21 @@ public:
     const char* ssid = "YourAPSSID";
     const char* password = "12345678";
 
-    // const char* ssid = "Ak";
-    // const char* password = "@AK@-12#";
-
-    // const char* ssid = "tripleAAA";
-    // const char* password = "12345678900";
-
-    // const char* ssid = "root";
-    // const char* password = "maxmax123";
-
-
-    String message = "Initial message";
-    int inputPostion=170;
-    unsigned long interval;
-    long num;
-    String ipaddress;
-    
-    Connection();
-    void setup();
-    void update();
-
+    void setupAP();
     void setupWIFI();
     void setupServer();
     void setupWebsocket();
     void setupDNSserver();//this can be used to access the server with anyname.local address 
+
+public:
+    String message = "Initial message";
+    int inputPostion = 170; //TODO implement a better a way
+    unsigned long interval;
+    String ipaddress;
+    
+    Connection();
+    void setup(bool isAccessPoint = true);
+    void update();
 
     void broadcastIP();
     void broadcastMsg(String msg);
