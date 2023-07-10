@@ -27,12 +27,11 @@ void increasePulseCountSubFlow()
 
 void updateMsg(){
     connection.broadcastIP();
-    connection.broadcastMsg("TDS ="+String(tds.finalMeasure())+" Postion ="+String(controlServo.getPostion()));
+    connection.broadcastMsg("VolTDS = "+String(tds.measure())+", Postion = "+String(controlServo.getPostion()));
 }
 void setup()
 {   
-    Serial.begin(115200);;
-
+    Serial.begin(115200);
     connection.setup();
     prioriFlow.begin();
     subFlow.begin();
@@ -46,20 +45,21 @@ void setup()
 
 void loop()
 {
-    prioriFlow.flowRate();
-    subFlow.flowRate();
-    Serial.println("=================== Before =============");
-    Serial.println(prioriFlow.flowRate());
-    Serial.println(prioriFlow.literPassed());
-    Serial.println("=================== after =============");
+    // prioriFlow.flowRate();
+    // subFlow.flowRate();
+    // Serial.println("=================== Before =============");
+    // Serial.println(prioriFlow.flowRate());
+    // Serial.println(prioriFlow.literPassed());
+    // Serial.println("=================== after =============");
 
-    Serial.println(subFlow.flowRate());
-    Serial.println(subFlow.literPassed()); 
+    // Serial.println(subFlow.flowRate());
+    // Serial.println(subFlow.literPassed()); 
    
 
-    Serial.print("TDS Value:");
-    Serial.print(tds.finalMeasure(),0);
-    Serial.println("ppm");
+    // Serial.print("TDS Value:");
+    // Serial.print(tds.measure(),0);
+    tds.measure(); //TODO This reads new voltage not the actual tds value
+    // Serial.println("ppm");
 
     controlServo.move();
     controlServo.setPostion(connection.inputPostion);

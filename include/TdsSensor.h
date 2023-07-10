@@ -4,27 +4,21 @@
 
 #define VREF 3.3     // analog reference voltage(Volt) of the ADC
 #define SUMOFPOINT  30           // sum of sample point
+
 class TdsSensor
 {
 private:
-int analogBuffer[SUMOFPOINT];     // store the analog value in the array, read from ADC
-int analogBufferTemp[SUMOFPOINT];
-int analogBufferIndex = 0;
-int copyIndex = 0;
-float averageVoltage = 0;
-float tdsValue = 0;
-     // current temperature for compensation
-int getMedianNum(int[] ,int );
+    float tdsValue = 0;
+    float sumTds = 0;
+    int count = 0;
+
 public:
-    float temperature = 25;  
+    float temperature = 25;  // current temperature for compensation
     volatile byte pin;
+
     TdsSensor(byte pin,float temperature);
     void begin();
-    double finalMeasure();
-
-
-
-    
+    double measure();    
 };
 
 
