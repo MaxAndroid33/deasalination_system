@@ -9,7 +9,6 @@
 const char* ssid = "YourAPSSID";
 const char* password = "12345678";
 
-
 Connection connection(ssid, password);
 
 FlowSensor prioriFlow(27, calibrationFactorValue);
@@ -32,16 +31,37 @@ void increasePulseCountSubFlow()
     subFlow.increasePulseCount();
 }
 
+void handleMessage(void *arg, uint8_t *data, size_t len) {
+  AwsFrameInfo *info = (AwsFrameInfo*)arg;
+  if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT) {
+    
+    data[len] = 0;
+    Serial.print("received==>");
+    Serial.println((char*)data);
+
+    char* key = strtok((char*)data, ":");
+    char* valueStr = strtok(NULL, " ");
+    int value = atoi(valueStr);
+
+    if (strcmp(key, "Angle") == 0) {
+        controlServo.setPostion(value);
+    }
+    if (strcmp(key, "Pump") == 0) {
+        inPump.setState(value);
+    }
+  }
+}
+
 void updateMsg(){
     connection.broadcastIP();
-    connection.broadcastMsg("VolTDS: " + String(tds.measure()) +
-                            ", Postion: " + String(controlServo.getPostion()) + 
-                            ", pumpState: " +String(inPump.getState()));
+    connection.broadcastMsg("TDS:" + String(tds.measure()) +
+                            ",Angle:" + String(controlServo.getPostion()) + 
+                            ",Pump:" +String(inPump.getState()));
 }
 void setup()
 {   
     Serial.begin(115200);
-    connection.setup();
+    connection.setup(handleMessage);
 
     prioriFlow.begin();
     subFlow.begin();
@@ -71,8 +91,6 @@ void loop()
     // Serial.println("ppm");
 
     controlServo.move();
-    controlServo.setPostion(connection.inputPosition);
-    inPump.setState(connection.pumpState); // display only ('0' means ON , '1' means OFF) 
     // Serial.print("pump state: ");
     // Serial.println(inPump.getState(),0);
     connection.update();    
