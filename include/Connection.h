@@ -18,6 +18,7 @@ private:
 
     AsyncWebServer server;
     AsyncWebSocket websocket;
+    void (*handleWebSocketMessage) (void *, uint8_t *, size_t ) ;
 
     const char* ssid;
     const char* password;
@@ -31,13 +32,11 @@ private:
 
 public:
     String message = "Initial message";
-    int inputPosition = 170; //TODO implement a better a way
-    int pumpState = 1;
     unsigned long interval;
     String ipaddress;
     
     Connection(const char*, const char*);
-    void setup(bool isAccessPoint = true);
+    void setup(void(*)(void *, uint8_t *, size_t ), bool = true);
     void update();
 
     void broadcastIP();

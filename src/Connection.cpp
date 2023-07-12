@@ -4,7 +4,7 @@ Connection::Connection(const char* ss, const char* pass):
                                         ssid(ss),
                                         password(pass), 
                                         server(80), 
-                                        websocket("/ws") 
+                                        websocket("/ws")
 {
     //apIP(8,8,4,4) //TODO used to explain MDNS
 }
@@ -40,12 +40,6 @@ void Connection::setupServer()
     server.on("/", HTTP_GET, [this](AsyncWebServerRequest *request){
          request->send(200, "text/plain", this->message); 
     });
-    server.on("/pos", HTTP_GET, [this](AsyncWebServerRequest *request){
-        inputPosition = request->getParam("pos")->value().toInt();
-        pumpState = request->getParam("pump")->value().toInt();
-        
-        request->send(200, "text/plain", "OK"); 
-    });
     server.onNotFound([](AsyncWebServerRequest *request){
         String nfmsg = "Hello World!\n\n";
         nfmsg += "URI: ";
@@ -58,7 +52,7 @@ void Connection::setupServer()
 }
 void Connection::setupWebsocket()
 {
-    websocket.onEvent([](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len){
+    websocket.onEvent([this](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len){
         if(type == WS_EVT_CONNECT)
         {
             Serial.println("WebSocket client connected");
@@ -67,6 +61,10 @@ void Connection::setupWebsocket()
         {
             Serial.println("WebSocket client disconnected");
         } 
+        else if(type == WS_EVT_DATA)
+        {
+            this->handleWebSocketMessage(arg, data, len);
+        }
     });
 }
 void Connection::setupDNSserver()
@@ -74,7 +72,7 @@ void Connection::setupDNSserver()
     dnsServer.start(53, "*", ip);
     dnsServer.setErrorReplyCode(DNSReplyCode::ServerFailure);
 }
-void Connection::setup(bool isAccessPoint)
+void Connection::setup(void(*hwsm)(void *, uint8_t *, size_t ), bool isAccessPoint)
 {
     if(isAccessPoint)
     {
@@ -87,6 +85,8 @@ void Connection::setup(bool isAccessPoint)
     setupServer();
     setupWebsocket();
     setupDNSserver();
+
+    handleWebSocketMessage = hwsm;
 }
 
 void Connection::update()
