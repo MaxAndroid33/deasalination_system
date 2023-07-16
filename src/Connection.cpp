@@ -1,5 +1,5 @@
 #include <Connection.h>
-
+#include <AsyncElegantOTA.h>
 Connection::Connection(const char* ss, const char* pass):
                                         ssid(ss),
                                         password(pass), 
@@ -47,7 +47,7 @@ void Connection::setupServer()
 
         request->send(200, "text/plain", nfmsg); 
     });
-
+    AsyncElegantOTA.begin(&server);    // Start ElegantOTA
     server.begin();
 }
 void Connection::setupWebsocket()
