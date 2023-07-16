@@ -1,4 +1,5 @@
-roboticsbrno/ServoESP32@^1.0.3
+milesburton/DallasTemperature@^3.11.0
 ayushsharma82/AsyncElegantOTA @ ^2.2.5
 ESP Async WebServer
+roboticsbrno/ServoESP32@^1.0.3
 https://github.com/dvarrel/ESPAsyncWebSrv.git
