@@ -6,8 +6,8 @@
 
 #define calibrationFactorValue 80.0
 
-const char *ssid = "root";
-const char *password = "maxmax123";
+const char *ssid = "import4G";
+const char *password = "max*!@.77013*!@";
 
 Connection connection(ssid, password);
 
