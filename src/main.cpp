@@ -13,6 +13,12 @@ Connection connection(ssid, password);
 
 FlowSensor prioriFlow(27, calibrationFactorValue);
 FlowSensor subFlow(14, calibrationFactorValue);
+double set_tds_value = 500;
+double tds_error = 0;
+double old_tds_error = 0;
+double tds_I = 0;
+double tds_d = 0;
+int control_angle = 55;
 
 TdsSensor tds(35, 5);
 TdsController controlServo(32);
@@ -21,6 +27,34 @@ InnerPumpControl inPump(13, true); // display only ('false' means ON , 'true' me
 
 unsigned long currentMillis = millis();
 unsigned long previousMillis = currentMillis;
+
+ unsigned long cur_time = millis();
+ unsigned long pre_time = cur_time;
+/// tds control function
+void tds_control(double setting_tds_Value, double current_tds_value)
+{
+    tds_error =  current_tds_value - setting_tds_Value ;
+    tds_I += tds_error;
+    cur_time = millis();
+    tds_d = (tds_error-old_tds_error)/(cur_time-pre_time);
+    pre_time = cur_time;
+    old_tds_error = tds_error;
+
+        control_angle += int(tds_error * 0.08) + 0.00002 * tds_I + 20 * tds_d;
+        if (control_angle <= 0)
+        {
+            control_angle = 0;
+        }
+        else if (control_angle >= 100)
+        {
+            control_angle = 100;
+        }
+        
+        
+            controlServo.setPostion(control_angle);
+        
+    
+}
 
 void increasePulseCountPrioriFlow()
 {
@@ -53,6 +87,10 @@ void handleMessage(void *arg, uint8_t *data, size_t len)
         {
             inPump.setState(value);
         }
+        if (strcmp(key, "tdsv") == 0)
+        {
+            set_tds_value = value;
+        }
     }
 }
 
@@ -60,14 +98,14 @@ void updateMsg()
 {
     connection.broadcastIP();
     connection.broadcastMsg("TDS:" + String(tds.measure()) +
-                            ",temp:" + String(tds.temperatureMeasure()) +
+                            ",temp:" + String(tds_error) +
                             ",Angle:" + String(controlServo.getPostion()) +
                             ",Pump:" + String(inPump.getState()));
 }
 void setup()
 {
     Serial.begin(115200);
-    connection.setup(handleMessage,false);
+    connection.setup(handleMessage, false);
 
     prioriFlow.begin();
     subFlow.begin();
@@ -81,6 +119,7 @@ void setup()
 
 void loop()
 {
+
     // prioriFlow.flowRate();
     // subFlow.flowRate();
     // Serial.println("=================== Before =============");
@@ -106,4 +145,14 @@ void loop()
 
         connection.interval = millis();
     }
+
+    
+    static unsigned long current_millis = millis();
+    if( millis() - current_millis > 1000){
+        tds_control(set_tds_value,tds.measure());
+        current_millis = millis();
+
+    }
+
+
 }
