@@ -1,37 +1,38 @@
 #include "TdsSensor.h"
 
-TdsSensor::TdsSensor(byte pin,uint8_t tempPin) : pin(pin), tempPin(tempPin) {}
+TdsSensor::TdsSensor(byte pin, uint8_t tempPin) : pin(pin), tempPin(tempPin) {}
 
 void TdsSensor::begin()
-{   
+{
     oneWire.begin(tempPin);
     tempSensor.setOneWire(&oneWire);
-    tempSensor.setResolution(tempDeviceAddress, TEMPERATURE_PRECISION);
+    
     tempSensor.begin();
     pinMode(pin, INPUT);
 }
 
 double TdsSensor::measure()
 {
-   float tempVolt = analogRead(this->pin); // read the analog value and store into the buffer
-//    temperature =temperatureMeasure() ;
     
+
+    float tempVolt = analogRead(this->pin); // read the analog value and store into the buffer
+
     sumTds += tempVolt;
-    //sumTds += tdsValue; //1.35*tempTds-0.00025*tempTds*tempTds;
+    // sumTds += tdsValue; //1.35*tempTds-0.00025*tempTds*tempTds;
     count++;
 
-    if(count > 2000)
+    if (count > 2000)
     {
-        
-         tdsVolt = sumTds / count ;
-         float tdsVolt_temp= tdsVolt * (float)VREF/ 4096.0;
-        float compensationCoefficient = 1.0 + 0.02 * (temperature - 25.0);
-    // // // temperature compensation
-     float compensationVoltage = tdsVolt_temp / compensationCoefficient;
 
-    // // // convert voltage value to tds value
-     float tempTds = (133.42 * compensationVoltage * compensationVoltage * compensationVoltage - 255.86 * compensationVoltage * compensationVoltage + 857.39 * compensationVoltage) * 0.5;
-        tdsValue =1.21*tempTds+112;
+        tdsVolt = sumTds / count;
+        float tdsVolt_temp = tdsVolt * (float)VREF / 4096.0;
+        float compensationCoefficient = 1.0 + 0.02 * (temperatureMeasure() - 25.0);
+        // // // temperature compensation
+        float compensationVoltage = tdsVolt_temp / compensationCoefficient;
+
+        // // // convert voltage value to tds value
+        float tempTds = (133.42 * compensationVoltage * compensationVoltage * compensationVoltage - 255.86 * compensationVoltage * compensationVoltage + 857.39 * compensationVoltage) * 0.5;
+        tdsValue = 1.21 * tempTds + 112;
         count = 0;
         sumTds = 0;
     }
@@ -41,9 +42,8 @@ double TdsSensor::measure()
 float TdsSensor::temperatureMeasure()
 {
     tempSensor.requestTemperatures();
-   return tempSensor.getTempC(tempDeviceAddress);
-   
-
+    float tempC = tempSensor.getTempCByIndex(0);
+    return tempC;
 }
 // median filtering algorithm
 int TdsSensor::getMedianNum(int bArray[], int iFilterLen)
