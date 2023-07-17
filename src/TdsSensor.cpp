@@ -6,14 +6,13 @@ void TdsSensor::begin()
 {
     oneWire.begin(tempPin);
     tempSensor.setOneWire(&oneWire);
-    
+
     tempSensor.begin();
     pinMode(pin, INPUT);
 }
 
 double TdsSensor::measure()
 {
-    
 
     float tempVolt = analogRead(this->pin); // read the analog value and store into the buffer
 
@@ -43,7 +42,15 @@ float TdsSensor::temperatureMeasure()
 {
     tempSensor.requestTemperatures();
     float tempC = tempSensor.getTempCByIndex(0);
-    return tempC;
+    if (int(tempC) == -127)
+    {
+        return temperature;
+    }
+    else
+    {
+        temperature = tempC;
+        return temperature;
+    }
 }
 // median filtering algorithm
 int TdsSensor::getMedianNum(int bArray[], int iFilterLen)
