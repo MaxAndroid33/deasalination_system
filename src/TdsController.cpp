@@ -25,7 +25,7 @@ void TdsController::controlTdsValue(double setting_tds_Value, double current_tds
     pre_time = cur_time;
     old_tds_error = tds_error;
 
-        control_angle += int(tds_error * 0.08) + 0.00002 * tds_I + 20 * tds_d;
+        control_angle += int(round(tds_error * KP+ KI * tds_I + KD * tds_d)) ;
         if (control_angle <= 0)
         {
             control_angle = 0;

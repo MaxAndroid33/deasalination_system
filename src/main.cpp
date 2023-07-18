@@ -43,7 +43,7 @@ void handleMessage(void *arg, uint8_t *data, size_t len)
 
         char *key = strtok((char *)data, ":");
         char *valueStr = strtok(NULL, " ");
-        int value = atoi(valueStr);
+        float value = atof(valueStr);
 
         if (strcmp(key, "Angle") == 0)
         {
@@ -51,11 +51,27 @@ void handleMessage(void *arg, uint8_t *data, size_t len)
         }
         if (strcmp(key, "Pump") == 0)
         {
-            inPump.setState(value);
+            inPump.setState(int(value));
         }
         if (strcmp(key, "setTds") == 0)
         {
             control.setTdsValue(value);
+        }
+        if (strcmp(key, "KI") == 0)
+        {
+            control.KI=value;
+        }
+        if (strcmp(key, "KD") == 0)
+        {
+            control.KD=value;
+        }
+        if (strcmp(key, "KP") == 0)
+        {
+            control.KP=value;
+        }
+          if (strcmp(key, "reset") == 0)
+        {
+           connection.resetEsp();
         }
     }
 }
@@ -68,12 +84,20 @@ void updateMsg()
                             ",Angle:" + String(control.getPostion()) +
                             ",temp:" + String(tds.temperatureMeasure()) +
                             ",error:" + String(control.tds_error) +
-                            ",Pump:" + String(inPump.getState()));
+                            ",Pump:" + String(inPump.getState()) +
+                            ",v1:" + String(control.KP*control.tds_error) +
+                            ",v2:" + String(control.KD*control.tds_d) +
+                            ",v3:" + String(control.KI*control.tds_I)+
+                            ",KI:" + String(control.KI) +
+                            ",KD:" + String(control.KD) +
+                            ",KP:" + String(control.KP)+
+                            ",reset:"
+                            );
 }
 void setup()
 {
     Serial.begin(115200);
-    connection.setup(handleMessage,false);
+    connection.setup(handleMessage, false);
 
     prioriFlow.begin();
     subFlow.begin();
@@ -113,9 +137,9 @@ void loop()
         connection.interval = millis();
     }
 
-    if( millis() - current_millis > 1000){
-       control.controlTdsValue(control.getTdsRequired(),tds.measure());
+    if (millis() - current_millis > 1000)
+    {
+        control.controlTdsValue(control.getTdsRequired(), tds.measure());
         current_millis = millis();
-
     }
 }
