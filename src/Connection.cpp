@@ -95,6 +95,11 @@ void Connection::update()
     websocket.cleanupClients();
 }
 
+void Connection::resetEsp()
+{
+    AsyncElegantOTA.restart();
+}
+
 void Connection::broadcastIP()
 {
     udp.beginPacket(UDP_ADRS, UDP_PORT);
