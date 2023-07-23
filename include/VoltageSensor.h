@@ -1,7 +1,11 @@
 #ifndef VoltageSensor_h
 #define VoltageSensor_h
 
+#ifndef __ARDUINO_H__
+#define __ARDUINO_H__
 #include <Arduino.h>
+
+#endif
 
 
 

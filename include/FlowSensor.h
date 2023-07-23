@@ -1,7 +1,11 @@
 #ifndef FlowSensor_h
 #define FlowSensor_h
 
+#ifndef __ARDUINO_H__
+#define __ARDUINO_H__
 #include <Arduino.h>
+
+#endif
 
 
 

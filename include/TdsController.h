@@ -1,7 +1,11 @@
 #ifndef __TDSCONTROLLER_H__
 #define __TDSCONTROLLER_H__
 
+#ifndef __ARDUINO_H__
+#define __ARDUINO_H__
 #include <Arduino.h>
+
+#endif
 #include <Servo.h>
 
 class TdsController

@@ -1,7 +1,11 @@
 #ifndef CurrentSensor_h
 #define CurrentSensor_h
 
+#ifndef __ARDUINO_H__
+#define __ARDUINO_H__
 #include <Arduino.h>
+
+#endif
 
 
 class CurrentSensor

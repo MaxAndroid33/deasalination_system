@@ -1,6 +1,11 @@
 #ifndef __TDSSENSOR_H__
 #define __TDSSENSOR_H__
+
+#ifndef __ARDUINO_H__
+#define __ARDUINO_H__
 #include <Arduino.h>
+
+#endif
 #include <OneWire.h>
 #include <DallasTemperature.h>
 

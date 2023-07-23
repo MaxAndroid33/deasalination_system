@@ -1,7 +1,11 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
+#ifndef __ARDUINO_H__
+#define __ARDUINO_H__
 #include <Arduino.h>
+
+#endif
 #include <WiFi.h>
 #include <ESPAsyncWebServer.h>
 #include <WiFiUdp.h>
