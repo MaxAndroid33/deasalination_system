@@ -3,6 +3,8 @@
 #include <Connection.h>
 #include <TdsController.h>
 #include <InnerPumpControl.h>
+#include <VoltageSensor.h>
+#include <CurrentSensor.h>
 
 #define calibrationFactorValue 80.0
 
@@ -11,24 +13,26 @@ const char *password = "max*!@.77013*!@";
 
 Connection connection(ssid, password);
 
-FlowSensor prioriFlow(27, calibrationFactorValue);
-FlowSensor subFlow(14, calibrationFactorValue);
+FlowSensor permeate_flow(27, calibrationFactorValue);    // Permeate (purified water)
+FlowSensor concentrate_flow(14, calibrationFactorValue); // concentrate
 
 TdsSensor tds(35, 5);
 TdsController control(32);
+VoltageSensor voltageSensor(34);
+CurrentSensor currentSensor(2, 33, 5);
 
 InnerPumpControl inPump(13, true); // display only ('false' means ON , 'true' means OFF)
 
 unsigned long currentMillis = millis();
 unsigned long previousMillis = currentMillis;
 unsigned long current_millis = millis();
-void increasePulseCountPrioriFlow()
+void increasePulseCountpermeat_flow()
 {
-    prioriFlow.increasePulseCount();
+    permeate_flow.increasePulseCount();
 }
 void increasePulseCountSubFlow()
 {
-    subFlow.increasePulseCount();
+    concentrate_flow.increasePulseCount();
 }
 
 void handleMessage(void *arg, uint8_t *data, size_t len)
@@ -59,19 +63,19 @@ void handleMessage(void *arg, uint8_t *data, size_t len)
         }
         if (strcmp(key, "KI") == 0)
         {
-            control.KI=value;
+            control.KI = value;
         }
         if (strcmp(key, "KD") == 0)
         {
-            control.KD=value;
+            control.KD = value;
         }
         if (strcmp(key, "KP") == 0)
         {
-            control.KP=value;
+            control.KP = value;
         }
-          if (strcmp(key, "reset") == 0)
+        if (strcmp(key, "reset") == 0)
         {
-           connection.resetEsp();
+            connection.resetEsp();
         }
     }
 }
@@ -85,41 +89,41 @@ void updateMsg()
                             ",temp:" + String(tds.temperatureMeasure()) +
                             ",error:" + String(control.tds_error) +
                             ",Pump:" + String(inPump.getState()) +
-                            ",v1:" + String(control.KP*control.tds_error) +
-                            ",v2:" + String(control.KD*control.tds_d) +
-                            ",v3:" + String(control.KI*control.tds_I)+
+                            ",v1:" + String(permeate_flow.literPassed()) +
+                            ",v2:" + String(concentrate_flow.literPassed()) +
+                            ",v3:" + String(permeate_flow.literPassed() + concentrate_flow.literPassed()) +
                             ",KI:" + String(control.KI) +
                             ",KD:" + String(control.KD) +
-                            ",KP:" + String(control.KP)+
-                            ",reset:"
-                            );
+                            ",KP:" + String(control.KP) +
+                            ",reset:");
 }
 void setup()
 {
     Serial.begin(115200);
     connection.setup(handleMessage, false);
 
-    prioriFlow.begin();
-    subFlow.begin();
-    attachInterrupt(digitalPinToInterrupt(prioriFlow.pin), increasePulseCountPrioriFlow, RISING);
-    attachInterrupt(digitalPinToInterrupt(subFlow.pin), increasePulseCountSubFlow, FALLING);
+    permeate_flow.begin();
+    concentrate_flow.begin();
+    attachInterrupt(digitalPinToInterrupt(permeate_flow.pin), increasePulseCountpermeat_flow, RISING);
+    attachInterrupt(digitalPinToInterrupt(concentrate_flow.pin), increasePulseCountSubFlow, FALLING);
 
     tds.begin();
     inPump.begin();
     control.begin();
+    voltageSensor.begin();
 }
 
 void loop()
 {
-    // prioriFlow.flowRate();
-    // subFlow.flowRate();
+    permeate_flow.flowRate();
+    concentrate_flow.flowRate();
     // Serial.println("=================== Before =============");
-    // Serial.println(prioriFlow.flowRate());
-    // Serial.println(prioriFlow.literPassed());
+    // Serial.println(permeate_flow.flowRate());
+    // Serial.println(permeate_flow.literPassed());
     // Serial.println("=================== after =============");
 
-    // Serial.println(subFlow.flowRate());
-    // Serial.println(subFlow.literPassed());
+    // Serial.println(concentrate_flow.flowRate());
+    // Serial.println(concentrate_flow.literPassed());
 
     // Serial.print("TDS Value:");
     // Serial.print(tds.measure(),0);
@@ -127,6 +131,9 @@ void loop()
     // Serial.println("ppm");
 
     control.moveServo();
+    voltageSensor.voltage_measured();
+    currentSensor.getCurrent();
+    currentSensor.debug();
     // Serial.print("pump state: ");
     // Serial.println(inPump.getState(),0);
     connection.update();

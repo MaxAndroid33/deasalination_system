@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.sql": "jinja-sql",
+        "*.tcc": "cpp",
+        "random": "cpp",
+        "regex": "cpp"
+    }
+}
