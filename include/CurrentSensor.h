@@ -7,26 +7,19 @@
 
 #endif
 
-
 class CurrentSensor
 {
-    public:
+public:
     CurrentSensor(byte pin);
-   
+
     CurrentSensor(int model, int vinPin, float vcc);
-    float getCurrent();
-
-    // gets the average of current with number iteration i
-    float getCurrentAverage(int i);
-
-    // prints detailed debugging information about the module
-    void debug();
+    float readCurrent();
 
 private:
     /**
      * read current
      */
-    float readCurrent();
+
     volatile byte pin;
     int _vin, _model;
     float _vcc, _current, _outVoltage;
