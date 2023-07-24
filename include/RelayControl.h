@@ -6,14 +6,14 @@
 
 #endif
 
-class InnerPumpControl{
+class RelayControl{
 
 uint8_t castStateOutput(boolean stateValue);
 uint8_t castStateOutput(int stateValue);
 public:
 boolean state;
 byte pin;
-InnerPumpControl(byte pin,boolean state);
+RelayControl(byte pin,boolean state);
 void setState(boolean state);
 void setState(int state);
 

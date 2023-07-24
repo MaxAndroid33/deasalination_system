@@ -1,31 +1,31 @@
 
-#include "InnerPumpControl.h"
+#include "RelayControl.h"
 
-InnerPumpControl::InnerPumpControl(byte pin, boolean state) : pin(pin), state(state) {}
+RelayControl::RelayControl(byte pin, boolean state) : pin(pin), state(state) {}
 
-void InnerPumpControl::begin()
+void RelayControl::begin()
 {
 
     pinMode(this->pin, OUTPUT);
     setState(state);
 }
 
-void InnerPumpControl::setState(boolean state)
+void RelayControl::setState(boolean state)
 {
     
     digitalWrite(pin, castStateOutput(state));
 }
-void InnerPumpControl::setState(int state)
+void RelayControl::setState(int state)
 {
     digitalWrite(pin, castStateOutput(state));
 }
-int InnerPumpControl::getState()
+int RelayControl::getState()
 {
 
     return state;
 }
 
-uint8_t InnerPumpControl::castStateOutput(boolean stateValue)
+uint8_t RelayControl::castStateOutput(boolean stateValue)
 {
     uint8_t value;
     stateValue ? value = 0x1 : value = 0x0; // display only ('0' means ON , '1' means OFF) 
@@ -33,7 +33,7 @@ uint8_t InnerPumpControl::castStateOutput(boolean stateValue)
 
     return value;
 }
-uint8_t InnerPumpControl::castStateOutput(int stateValue)
+uint8_t RelayControl::castStateOutput(int stateValue)
 {
     uint8_t value;
     stateValue ? value = 0x1 : value = 0x0; // display only ('0' means ON , '1' means OFF) 
