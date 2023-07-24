@@ -13,12 +13,11 @@
 #define FLOWMETER_CONCENTRATE_PIN 14
 #define VOLTAGE_PIN 34
 #define CURRENT_PIN 33
-#define TANK1_TRIG_PIN 8
-#define TANK2_TRIG_PIN 3
-#define TANK1_ECHO_PIN 10
-#define TANK2_ECHO_PIN 11
+#define tankPlant_TRIG_PIN 8
+#define tankDrink_TRIG_PIN 3
+#define tankPlant_ECHO_PIN 10
+#define tankDrink_ECHO_PIN 11
 #define INNER_PUMP_PIN 13
-
 
 #define calibrationFactorValue 80.0
 
@@ -26,16 +25,15 @@ const char *ssid = "import4G";
 const char *password = "max*!@.77013*!@";
 
 Connection connection(ssid, password);
-FlowSensor permeate_flow(FLOWMETER_PERMEATE_PIN, calibrationFactorValue);    // Permeate (purified water)
+FlowSensor permeate_flow(FLOWMETER_PERMEATE_PIN, calibrationFactorValue);       // Permeate (purified water)
 FlowSensor concentrate_flow(FLOWMETER_CONCENTRATE_PIN, calibrationFactorValue); // concentrate
 TdsSensor tds(TDS_PIN, 5);
 TdsController control(SERVO_PIN);
 VoltageSensor voltageSensor(VOLTAGE_PIN);
 CurrentSensor currentSensor(2, CURRENT_PIN, 5);
-TankLevel tank1(TANK1_TRIG_PIN,TANK1_ECHO_PIN);
-TankLevel tank2(TANK2_TRIG_PIN,TANK2_ECHO_PIN);
+TankLevel tankPlant(tankPlant_TRIG_PIN, tankPlant_ECHO_PIN);
+TankLevel tankDrink(tankDrink_TRIG_PIN, tankDrink_ECHO_PIN);
 RelayControl inPump(INNER_PUMP_PIN, true); // display only ('false' means ON , 'true' means OFF)
-
 
 unsigned long currentMillis = millis();
 unsigned long previousMillis = currentMillis;
@@ -91,11 +89,10 @@ void handleMessage(void *arg, uint8_t *data, size_t len)
         {
             connection.resetEsp();
         }
-          if (strcmp(key, "maxlevel") == 0)
+        if (strcmp(key, "maxlevel") == 0)
         {
-            tank1.setMaxLevelTank(value);
-            tank2.setMaxLevelTank(value);
-
+            tankPlant.setMaxLevelTank(value);
+            tankDrink.setMaxLevelTank(value);
         }
     }
 }
@@ -115,9 +112,13 @@ void updateMsg()
                             ",KI:" + String(control.KI) +
                             ",KD:" + String(control.KD) +
                             ",KP:" + String(control.KP) +
-                            ",reset:"+
-                            ",tank1:" + String(tank1.tankLevelPresent()) +
-                            ",tank2:" + String(tank2.tankLevelPresent()) );
+                            ",reset:" +
+                            ",tankPlant:" + String(tankPlant.tankLevelPresent()) +
+                            ",tankDrink:" + String(tankDrink.tankLevelPresent()) +
+                            ",maxlevel:" + String(tankDrink.MaxLevel) +
+                            ",current:" + String(currentSensor.readCurrent()) +
+                            ",voltage:" + String(voltageSensor.voltage_measured()) 
+                 );
 }
 void setup()
 {
@@ -134,22 +135,22 @@ void setup()
     control.begin();
     voltageSensor.begin();
 
-    tank1.setMaxLevelTank(50);
-    tank1.begin();
-    tank2.setMaxLevelTank(50);
-    tank2.begin();
+    tankPlant.setMaxLevelTank(50);
+    tankPlant.begin();
+    tankDrink.setMaxLevelTank(50);
+    tankDrink.begin();
 }
 
 void loop()
 {
     permeate_flow.flowRate();
     concentrate_flow.flowRate();
-    tds.measure(); 
+    tds.measure();
     control.moveServo();
     voltageSensor.voltage_measured();
-    currentSensor.getCurrent();
-    tank1.monitor();
-    tank2.monitor();
+    currentSensor.readCurrent();
+    tankPlant.monitor();
+    tankDrink.monitor();
     connection.update();
     if ((millis() - connection.interval) > 2000)
     {

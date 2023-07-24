@@ -16,21 +16,16 @@ class TankLevel
     volatile byte trigPin;
     volatile byte echoPin;
     long duration;
-    float MaxLevel;
-
-unsigned long currentMillis = millis();
-unsigned long previousMillis =currentMillis;
-
 
 public:
     TankLevel(byte trigPin, byte echoPin);
     void begin();
+    float MaxLevel;
     void setMaxLevelTank(float high);
     float waterLevelInCm();
     float waterLevelInInch();
     float tankLevelPresent();
     long monitor();
-    
 };
 
 #endif // __TANKLEVEL_H__
