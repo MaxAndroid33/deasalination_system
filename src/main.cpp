@@ -13,10 +13,12 @@
 #define FLOWMETER_CONCENTRATE_PIN 14
 #define VOLTAGE_PIN 34
 #define CURRENT_PIN 33
-#define tankPlant_TRIG_PIN 8
-#define tankDrink_TRIG_PIN 3
-#define tankPlant_ECHO_PIN 10
-#define tankDrink_ECHO_PIN 11
+#define tankPlant_TRIG_PIN 2
+#define tankDrink_TRIG_PIN 15
+#define tankPlant_ECHO_PIN 22
+#define tankDrink_ECHO_PIN 23
+#define TEMPERATURE_SENSOR_PIN 5
+
 #define INNER_PUMP_PIN 13
 
 #define calibrationFactorValue 80.0
@@ -27,7 +29,7 @@ const char *password = "max*!@.77013*!@";
 Connection connection(ssid, password);
 FlowSensor permeate_flow(FLOWMETER_PERMEATE_PIN, calibrationFactorValue);       // Permeate (purified water)
 FlowSensor concentrate_flow(FLOWMETER_CONCENTRATE_PIN, calibrationFactorValue); // concentrate
-TdsSensor tds(TDS_PIN, 5);
+TdsSensor tds(TDS_PIN, TEMPERATURE_SENSOR_PIN);
 TdsController control(SERVO_PIN);
 VoltageSensor voltageSensor(VOLTAGE_PIN);
 CurrentSensor currentSensor(2, CURRENT_PIN, 5);
