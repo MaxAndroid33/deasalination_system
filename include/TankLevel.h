@@ -16,6 +16,8 @@ class TankLevel
     volatile byte trigPin;
     volatile byte echoPin;
     long duration;
+    bool state = false;
+
 
 public:
     TankLevel(byte trigPin, byte echoPin);
@@ -26,6 +28,7 @@ public:
     float waterLevelInInch();
     float tankLevelPresent();
     long monitor();
+    bool status();
 };
 
 #endif // __TANKLEVEL_H__

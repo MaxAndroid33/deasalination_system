@@ -13,7 +13,7 @@ void TankLevel::setMaxLevelTank(float high){ MaxLevel =high;}
 
 float TankLevel::waterLevelInCm()
 {
-    return duration * SOUND_SPEED/2;
+    return (duration * SOUND_SPEED/2) -10;
 }
 
 float TankLevel::waterLevelInInch()
@@ -23,7 +23,7 @@ float TankLevel::waterLevelInInch()
 
 float TankLevel::tankLevelPresent()
 {   
-    return abs(MaxLevel - waterLevelInCm())* 100;
+    return ((MaxLevel - waterLevelInCm())/MaxLevel)* 100;
 }
 
 long TankLevel::monitor()
@@ -44,4 +44,17 @@ long TankLevel::monitor()
  
 
     return duration;
+}
+
+bool TankLevel::status()
+{   
+    if(tankLevelPresent() > 99){
+        state = true;
+    }
+    if(tankLevelPresent() < 50 ){
+        state = false;
+    }
+    
+    return state; //Tank if Full return 'True' ,if Low retturn 'False'
+    
 }
