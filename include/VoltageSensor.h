@@ -21,7 +21,7 @@ int adc_value = 0;
 // Floats for resistor values in divider (in ohms)
 float R1 = 30000.0;// upper resistor of the sensor
 float R2 = 7500.0;  //lower resistor of the sensor
-
+int sumV = 0,count = 0,voltageInt = 0;
 public:
 VoltageSensor(int);
 void begin();

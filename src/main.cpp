@@ -191,6 +191,6 @@ void updateMsg()
                             ",tankDrink:" + String(tankDrink.tankLevelPresent()) +
                             ",maxlevel:" + String(tankDrink.MaxLevel) +
                             ",current:" + String(currentSensor.readCurrent()) +
-                            ",voltage:" + String(currentSensor.voltage) 
+                            ",voltage:" + String(voltageSensor.voltage_measured()) 
                  );
 }
