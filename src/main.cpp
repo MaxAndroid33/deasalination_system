@@ -23,8 +23,8 @@
 
 #define calibrationFactorValue 80.0
 
-const char *ssid = "import4G";
-const char *password = "max*!@.77013*!@";
+const char *ssid = "OnePlus";
+const char *password = "00000000";
 
 Connection connection(ssid, password);
 FlowSensor permeate_flow(FLOWMETER_PERMEATE_PIN, calibrationFactorValue);       // Permeate (purified water)
@@ -40,6 +40,78 @@ RelayControl inPump(INNER_PUMP_PIN, true); // display only ('false' means ON , '
 unsigned long currentMillis = millis();
 unsigned long previousMillis = currentMillis;
 unsigned long current_millis = millis();
+
+void increasePulseCountpermeat_flow();
+void increasePulseCountSubFlow();
+void handleMessage(void *arg, uint8_t *data, size_t len);
+void updateMsg();
+
+
+
+
+
+
+void setup()
+{
+    Serial.begin(115200);
+    connection.setup(handleMessage, false);
+
+    permeate_flow.begin();
+    concentrate_flow.begin();
+    attachInterrupt(digitalPinToInterrupt(permeate_flow.pin), increasePulseCountpermeat_flow, RISING);
+    attachInterrupt(digitalPinToInterrupt(concentrate_flow.pin), increasePulseCountSubFlow, FALLING);
+
+    tds.begin();
+    inPump.begin();
+    control.begin();
+    voltageSensor.begin();
+
+    tankPlant.setMaxLevelTank(50);
+    tankPlant.begin();
+    tankDrink.setMaxLevelTank(50);
+    tankDrink.begin();
+}
+
+void loop()
+{
+    permeate_flow.flowRate();
+    concentrate_flow.flowRate();
+    tds.measure();
+    control.moveServo();
+    voltageSensor.voltage_measured();
+    currentSensor.readCurrent();
+    // tankPlant.monitor();
+    // tankDrink.monitor();
+    connection.update();
+    if ((millis() - connection.interval) > 2000)
+    {
+        updateMsg();
+
+        connection.interval = millis();
+    }
+
+    if (millis() - current_millis > 1000)
+    {
+        control.controlTdsValue(control.getTdsRequired(), tds.measure());
+        current_millis = millis();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void increasePulseCountpermeat_flow()
 {
     permeate_flow.increasePulseCount();
@@ -119,51 +191,6 @@ void updateMsg()
                             ",tankDrink:" + String(tankDrink.tankLevelPresent()) +
                             ",maxlevel:" + String(tankDrink.MaxLevel) +
                             ",current:" + String(currentSensor.readCurrent()) +
-                            ",voltage:" + String(voltageSensor.voltage_measured()) 
+                            ",voltage:" + String(currentSensor.voltage) 
                  );
-}
-void setup()
-{
-    Serial.begin(115200);
-    connection.setup(handleMessage, false);
-
-    permeate_flow.begin();
-    concentrate_flow.begin();
-    attachInterrupt(digitalPinToInterrupt(permeate_flow.pin), increasePulseCountpermeat_flow, RISING);
-    attachInterrupt(digitalPinToInterrupt(concentrate_flow.pin), increasePulseCountSubFlow, FALLING);
-
-    tds.begin();
-    inPump.begin();
-    control.begin();
-    voltageSensor.begin();
-
-    tankPlant.setMaxLevelTank(50);
-    tankPlant.begin();
-    tankDrink.setMaxLevelTank(50);
-    tankDrink.begin();
-}
-
-void loop()
-{
-    permeate_flow.flowRate();
-    concentrate_flow.flowRate();
-    tds.measure();
-    control.moveServo();
-    voltageSensor.voltage_measured();
-    currentSensor.readCurrent();
-    tankPlant.monitor();
-    tankDrink.monitor();
-    connection.update();
-    if ((millis() - connection.interval) > 2000)
-    {
-        updateMsg();
-
-        connection.interval = millis();
-    }
-
-    if (millis() - current_millis > 1000)
-    {
-        control.controlTdsValue(control.getTdsRequired(), tds.measure());
-        current_millis = millis();
-    }
 }
