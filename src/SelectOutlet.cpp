@@ -10,23 +10,24 @@ void SelectOutlet::begin()
     plantPumpOut.begin();
 }
 
-String SelectOutlet::openValve(String type)
+String SelectOutlet::openValve(String type,boolean status)
 {
     switch (ConvertType(type))
     {
     case drink:
-        drinkValve.setState(true);
-        plantValve.setState(false);
-
+        drinkValve.setState(status);
+        plantValve.setState(!status);
+        return type + String(":") + String(status);
         break;
     case plant:
-        plantValve.setState(true);
-        drinkValve.setState(false);
+        plantValve.setState(status);
+        drinkValve.setState(!status);
+        return type + String(":") + String(status);
         break;
     default:
         break;
     }
-    return type;
+    return "NULL";
 }
 
 String SelectOutlet::runPump(String type, boolean status)
@@ -49,6 +50,7 @@ String SelectOutlet::runPump(String type, boolean status)
     default:
         break;
     }
+    return "NULL";
 }
 
 String SelectOutlet::getState(String type)

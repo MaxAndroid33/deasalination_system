@@ -43,7 +43,7 @@ class SelectOutlet
 
 public:
     void begin();
-    String openValve(String type);
+    String openValve(String type,boolean status);
     String runPump(String type,boolean status);
     String getState(String type);
      

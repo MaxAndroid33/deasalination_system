@@ -9,13 +9,33 @@ void VoltageSensor::begin()
 
 float VoltageSensor::voltage_measured()
 {
-  // Read the Analog Input
-  adc_value = analogRead(this->pin);
 
-  // Determine voltage at ADC input
-  adc_voltage = (adc_value * ref_voltage) / 4096.0;
+     // put your main code here, to run repeatedly:
+  int tempV = analogRead(this->pin);
 
-  // Calculate voltage at divider input
-  in_voltage = adc_voltage * (R1 + R2) / R2;
+    sumV += tempV;
+    // sumTds += tdsValue; //1.35*tempTds-0.00025*tempTds*tempTds;
+    count++;
+
+    if (count > 1000)
+    {
+
+
+        voltageInt = sumV / count;
+
+  adc_voltage = ((R1 + R2) / R2)*(voltageInt * ref_voltage) / 4096.0;
+  in_voltage = 0.5 + 1.1 * adc_voltage  - 0.006 *adc_voltage*adc_voltage;
+
+        count = 0;
+        sumV = 0;
+    }
+
+
+
+
+
+
+
+  
   return in_voltage;
 }

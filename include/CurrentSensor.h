@@ -11,7 +11,8 @@ class CurrentSensor
 {
 public:
     CurrentSensor(byte pin);
-
+    float voltage,sumV = 0 ;
+    int count = 0, voltageInt = 0;
     CurrentSensor(int model, int vinPin, float vcc);
     float readCurrent();
 
