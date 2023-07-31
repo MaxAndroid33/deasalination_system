@@ -1,5 +1,5 @@
-#ifndef __INNERPUMPCONTROL_H__
-#define __INNERPUMPCONTROL_H__
+#ifndef __RELAYCONTROL_H__
+#define __RELAYCONTROL_H__
 #ifndef __ARDUINO_H__
 #define __ARDUINO_H__
 #include <Arduino.h>

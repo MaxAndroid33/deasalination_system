@@ -2,10 +2,11 @@
 #include <TdsSensor.h>
 #include <Connection.h>
 #include <TdsController.h>
-#include <RelayControl.h>
+#include <SelectOutlet.h>
 #include <VoltageSensor.h>
 #include <CurrentSensor.h>
 #include <TankLevel.h>
+
 
 #define TDS_PIN 35
 #define SERVO_PIN 32
@@ -18,8 +19,11 @@
 #define tankPlant_ECHO_PIN 22
 #define tankDrink_ECHO_PIN 23
 #define TEMPERATURE_SENSOR_PIN 5
-
-#define INNER_PUMP_PIN 13
+// #define INNER_PUMP_PIN 13
+// #define DRINK_VALVE_PIN 25
+// #define DRINK_PUMP_PIN 26
+// #define PLANT_VALVE_PIN 18
+// #define PLANT_PUMP_PIN 19
 
 #define calibrationFactorValue 80.0
 
@@ -35,7 +39,12 @@ VoltageSensor voltageSensor(VOLTAGE_PIN);
 CurrentSensor currentSensor(2, CURRENT_PIN, 5);
 TankLevel tankPlant(tankPlant_TRIG_PIN, tankPlant_ECHO_PIN);
 TankLevel tankDrink(tankDrink_TRIG_PIN, tankDrink_ECHO_PIN);
-RelayControl inPump(INNER_PUMP_PIN, true); // display only ('false' means ON , 'true' means OFF)
+SelectOutlet out;
+// RelayControl inPump(INNER_PUMP_PIN, true); // display only ('false' means ON , 'true' means OFF)
+// RelayControl drinkValve(DRINK_VALVE_PIN, true);
+// RelayControl drinkPumpOut(DRINK_PUMP_PIN, true);
+// RelayControl plantValve(PLANT_VALVE_PIN, true);
+// RelayControl plantPumpOut(PLANT_PUMP_PIN, true);
 
 unsigned long currentMillis = millis();
 unsigned long previousMillis = currentMillis;
@@ -69,7 +78,7 @@ void handleMessage(void *arg, uint8_t *data, size_t len)
         }
         if (strcmp(key, "Pump") == 0)
         {
-            inPump.setState(int(value));
+            // inPump.setState(int(value));
         }
         if (strcmp(key, "setTds") == 0)
         {
@@ -96,6 +105,7 @@ void handleMessage(void *arg, uint8_t *data, size_t len)
             tankPlant.setMaxLevelTank(value);
             tankDrink.setMaxLevelTank(value);
         }
+        
     }
 }
 
@@ -107,7 +117,7 @@ void updateMsg()
                             ",Angle:" + String(control.getPostion()) +
                             ",temp:" + String(tds.temperatureMeasure()) +
                             ",error:" + String(control.tds_error) +
-                            ",Pump:" + String(inPump.getState()) +
+                            ",innerpump:" + String(out.getState("innerpump")) +
                             ",PerFlow:" + String(permeate_flow.literPassed()) +
                             ",ConFlow:" + String(concentrate_flow.literPassed()) +
                             ",TotalFlow:" + String(permeate_flow.literPassed() + concentrate_flow.literPassed()) +
@@ -133,7 +143,7 @@ void setup()
     attachInterrupt(digitalPinToInterrupt(concentrate_flow.pin), increasePulseCountSubFlow, FALLING);
 
     tds.begin();
-    inPump.begin();
+    out.begin();
     control.begin();
     voltageSensor.begin();
 
@@ -151,8 +161,8 @@ void loop()
     control.moveServo();
     voltageSensor.voltage_measured();
     currentSensor.readCurrent();
-    tankPlant.monitor();
-    tankDrink.monitor();
+    // tankPlant.monitor();
+    // tankDrink.monitor();
     connection.update();
     if ((millis() - connection.interval) > 2000)
     {
