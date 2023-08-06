@@ -8,21 +8,21 @@
 #include <TankLevel.h>
 
 #define TDS_PIN 35
-#define SERVO_PIN 32
-#define FLOWMETER_PERMEATE_PIN 27
-#define FLOWMETER_CONCENTRATE_PIN 14
-#define VOLTAGE_PIN 34
-#define CURRENT_PIN 33
-#define tankPlant_TRIG_PIN 2
-#define tankDrink_TRIG_PIN 15
-#define tankPlant_ECHO_PIN 22
-#define tankDrink_ECHO_PIN 23
-#define TEMPERATURE_SENSOR_PIN 5
+#define SERVO_PIN 27
+#define FLOWMETER_PERMEATE_PIN 14
+#define FLOWMETER_CONCENTRATE_PIN 26
+#define VOLTAGE_PIN 36
+#define CURRENT_PIN 34
+#define tankPlant_TRIG_PIN 33
+#define tankDrink_TRIG_PIN 2
+#define tankPlant_ECHO_PIN 32
+#define tankDrink_ECHO_PIN 25
+#define TEMPERATURE_SENSOR_PIN 12
 
 #define calibrationFactorValue 80.0
 
-const char *ssid = "OnePlus";
-const char *password = "00000000";
+const char *ssid = "import4G";
+const char *password = "max*!@.77013*!@";
 
 Connection connection(ssid, password);
 FlowSensor permeate_flow(FLOWMETER_PERMEATE_PIN, calibrationFactorValue);       // Permeate (purified water)
@@ -73,8 +73,8 @@ void loop()
     control.moveServo();
     voltageSensor.voltage_measured();
     currentSensor.readCurrent();
-    // tankPlant.monitor();
-    // tankDrink.monitor();
+    tankPlant.monitor();
+    tankDrink.monitor();
     connection.update();
     if ((millis() - connection.interval) > 2000)
     {
@@ -152,7 +152,8 @@ void handleMessage(void *arg, uint8_t *data, size_t len)
         }
         if (strcmp(key, "innerpump") == 0)
         {
-            out.runPump("innerpump", boolean(int(value)));
+            if ((out.getState("drink") == "on") || (out.getState("plant") == "on")) // one of the valves must be open
+                out.runPump("innerpump", boolean(int(value)));
         }
         if (strcmp(key, "plantpump") == 0)
         {

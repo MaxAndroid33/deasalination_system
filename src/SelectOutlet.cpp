@@ -99,10 +99,10 @@ String SelectOutlet::toString(int status)
 {
     switch (status)
     {
-    case 0:
+    case 1:
         return "off";
         break;
-    case 1:
+    case 0:
     default:
         return "on";
         break;
