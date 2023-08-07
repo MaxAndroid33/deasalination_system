@@ -8,15 +8,15 @@
 #include <TankLevel.h>
 
 #define TDS_PIN 35
-#define SERVO_PIN 27
+#define SERVO_PIN 26
 #define FLOWMETER_PERMEATE_PIN 14
-#define FLOWMETER_CONCENTRATE_PIN 26
+#define FLOWMETER_CONCENTRATE_PIN 27
 #define VOLTAGE_PIN 36
-#define CURRENT_PIN 34
-#define tankPlant_TRIG_PIN 33
-#define tankDrink_TRIG_PIN 2
+#define CURRENT_PIN 33
+#define tankPlant_TRIG_PIN 2
+#define tankDrink_TRIG_PIN 25
 #define tankPlant_ECHO_PIN 32
-#define tankDrink_ECHO_PIN 25
+#define tankDrink_ECHO_PIN 34
 #define TEMPERATURE_SENSOR_PIN 12
 
 #define calibrationFactorValue 80.0
@@ -59,9 +59,9 @@ void setup()
     control.begin();
     voltageSensor.begin();
 
-    tankPlant.setMaxLevelTank(50);
+    tankPlant.setMaxLevelTank(500);
     tankPlant.begin();
-    tankDrink.setMaxLevelTank(50);
+    tankDrink.setMaxLevelTank(500);
     tankDrink.begin();
 }
 
@@ -69,12 +69,13 @@ void loop()
 {
     permeate_flow.flowRate();
     concentrate_flow.flowRate();
-    tds.measure();
+    
     control.moveServo();
     voltageSensor.voltage_measured();
     currentSensor.readCurrent();
     tankPlant.monitor();
     tankDrink.monitor();
+    tds.measure();
     connection.update();
     if ((millis() - connection.interval) > 2000)
     {

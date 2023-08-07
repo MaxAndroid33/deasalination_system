@@ -6,10 +6,10 @@
 #include <Arduino.h>
 
 #endif
-#define INNER_PUMP_PIN 17
-#define DRINK_VALVE_PIN 19
-#define DRINK_PUMP_PIN 16
-#define PLANT_VALVE_PIN 4
+#define INNER_PUMP_PIN 21
+#define DRINK_VALVE_PIN 5
+#define DRINK_PUMP_PIN 4
+#define PLANT_VALVE_PIN 16
 #define PLANT_PUMP_PIN 18
 
 #ifndef RelayControl_h
