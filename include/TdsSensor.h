@@ -28,9 +28,11 @@ float tdsValue = 0;
 float sumTds =0 ;
 int count =0 ;
 
+
      // current temperature for compensation
 int getMedianNum(int[] ,int );
 public:
+float a =1.21,b =112;
     float temperature = 25;  
     volatile byte pin;
     volatile uint8_t tempPin;

@@ -31,7 +31,7 @@ double TdsSensor::measure()
 
         // // // convert voltage value to tds value
         float tempTds = (133.42 * compensationVoltage * compensationVoltage * compensationVoltage - 255.86 * compensationVoltage * compensationVoltage + 857.39 * compensationVoltage) * 0.5;
-        tdsValue = 1.21 * tempTds + 112;
+        tdsValue = a * tempTds + b;
         count = 0;
         sumTds = 0;
     }

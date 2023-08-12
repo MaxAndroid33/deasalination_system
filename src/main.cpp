@@ -124,11 +124,11 @@ void handleMessage(void *arg, uint8_t *data, size_t len)
         }
         if (strcmp(key, "KI") == 0)
         {
-            control.KI = value;
+            tds.a = value;
         }
         if (strcmp(key, "KD") == 0)
         {
-            control.KD = value;
+            tds.b = value;
         }
         if (strcmp(key, "KP") == 0)
         {
