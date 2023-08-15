@@ -17,6 +17,7 @@ class TankLevel
     volatile byte echoPin;
     long duration;
     bool state = false;
+    unsigned long current_millis = millis();
 
 
 public:

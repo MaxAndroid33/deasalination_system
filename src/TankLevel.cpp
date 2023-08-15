@@ -13,7 +13,7 @@ void TankLevel::setMaxLevelTank(float high){ MaxLevel =high;}
 
 float TankLevel::waterLevelInCm()
 {
-    return (duration * SOUND_SPEED/2) -10;
+    return (duration * SOUND_SPEED/2)-1 ;
 }
 
 float TankLevel::waterLevelInInch()
@@ -23,22 +23,29 @@ float TankLevel::waterLevelInInch()
 
 float TankLevel::tankLevelPresent()
 {   
-    return ((MaxLevel - waterLevelInCm())/MaxLevel)* 100;
+    float temp_level = ((MaxLevel - waterLevelInCm())/MaxLevel)* 100;
+
+    return temp_level>=0? temp_level:0;
 }
 
 long TankLevel::monitor()
 {
     // Clears the trigPin
-  digitalWrite(trigPin, LOW);
-   delayMicroseconds(2);
+//   digitalWrite(trigPin, LOW);
+//    delayMicroseconds(2);
   // Sets the trigPin on HIGH state for 10 micro seconds
-  digitalWrite(trigPin, HIGH);
+  if (millis() - current_millis > 2000)
+    {
+          digitalWrite(trigPin, HIGH);
   delayMicroseconds(10);
   digitalWrite(trigPin, LOW);
   
   // Reads the echoPin, returns the sound wave travel time in microseconds
-  duration = pulseIn(echoPin, HIGH,10000UL);
+  duration = pulseIn(echoPin, HIGH);
   
+        current_millis = millis();
+    }
+
     return duration;
 }
 

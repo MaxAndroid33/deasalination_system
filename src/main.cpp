@@ -59,9 +59,9 @@ void setup()
     control.begin();
     voltageSensor.begin();
 
-    tankPlant.setMaxLevelTank(500);
+    tankPlant.setMaxLevelTank(28);
     tankPlant.begin();
-    tankDrink.setMaxLevelTank(500);
+    tankDrink.setMaxLevelTank(28);
     tankDrink.begin();
 }
 
@@ -84,7 +84,7 @@ void loop()
         connection.interval = millis();
     }
 
-    if (millis() - current_millis > 1000)
+    if (millis() - current_millis > 500)
     {
         control.controlTdsValue(control.getTdsRequired(), tds.measure());
         current_millis = millis();
@@ -124,11 +124,11 @@ void handleMessage(void *arg, uint8_t *data, size_t len)
         }
         if (strcmp(key, "KI") == 0)
         {
-            tds.a = value;
+            control.KI = value;
         }
         if (strcmp(key, "KD") == 0)
         {
-            tds.b = value;
+            control.KD = value;
         }
         if (strcmp(key, "KP") == 0)
         {
@@ -183,11 +183,11 @@ void updateMsg()
                             ",PerFlow:" + String(permeate_flow.literPassed()) +
                             ",ConFlow:" + String(concentrate_flow.literPassed()) +
                             ",TotalFlow:" + String(permeate_flow.literPassed() + concentrate_flow.literPassed()) +
-                            ",KI:" + String(control.KI) +
-                            ",KD:" + String(control.KD) +
-                            ",KP:" + String(control.KP) +
+                            ",KI:" + String((control.KI)*(control.tds_I) )+
+                            ",KD:" + String((control.KD)*(control.tds_d) ) +
+                            ",KP:" + String((control.KP)*(control.tds_error)) +
                             ",reset:" +
-                            ",tankPlant:" + String(tankPlant.tankLevelPresent()) +
+                            ",tankPlant:" + String(control.total_error)+
                             ",tankDrink:" + String(tankDrink.tankLevelPresent()) +
                             ",maxlevel:" + String(tankDrink.MaxLevel) +
                             ",current:" + String(currentSensor.readCurrent()) +

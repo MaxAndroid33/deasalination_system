@@ -17,16 +17,17 @@ class TdsController
     float set_tds_value = 500;
 
     double old_tds_error = 0;
-    int control_angle=100;
+    
     unsigned long cur_time = millis();
     unsigned long pre_time = cur_time;
 
 public:
+    int total_error = 0;
     double tds_error = 0;
     double tds_I = 0;
     double tds_d = 0;
-    float KI = 0 ,KP = 0.08 ,KD=0;
-
+    float KI = 0.005 ,KP = 0.005 ,KD=55;
+    int control_angle=100;
     void setPostion(int postion);
     void begin();
     TdsController(byte pin);

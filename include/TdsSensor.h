@@ -32,7 +32,7 @@ int count =0 ;
      // current temperature for compensation
 int getMedianNum(int[] ,int );
 public:
-float a =1.21,b =112;
+float a =1.17,b =95;
     float temperature = 25;  
     volatile byte pin;
     volatile uint8_t tempPin;
