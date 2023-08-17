@@ -37,7 +37,7 @@ SelectOutlet out;
 enum objName
 {
     LIVETANK,
-    ELECTRICITY,
+    POWER,
     PRODUCTION,
     PUMPSANDVALVES,
 };
@@ -192,10 +192,10 @@ void updateMsg()
                               ",plantvalve:" + String(out.getBoolState("plant")) +
                               ",drinkvalve:" + String(out.getBoolState("drink")) + "|";
 
-    String electricityData = String(ELECTRICITY) + "=voltageIn:" + String(voltageSensor.voltage_measured()) +
+    String powerData = String(POWER) + "=voltageIn:" + String(voltageSensor.voltage_measured()) +
                              ",currentOut:" + String(currentSensor.readCurrent()) +",currentIn:0" +
                              ",batteryLevel:" + String(voltageSensor.battery_level()) +",duration:1"// still not exist
                              + "|";
 
-    connection.broadcastMsg(tankData + productionData + pumpAndValveData + electricityData);
+    connection.broadcastMsg(tankData + productionData + pumpAndValveData + powerData);
 }
