@@ -194,7 +194,7 @@ void updateMsg()
 
     String electricityData = String(ELECTRICITY) + "=voltageIn:" + String(voltageSensor.voltage_measured()) +
                              ",currentOut:" + String(currentSensor.readCurrent()) +",currentIn:0" +
-                             ",batteryLevel:" + String(0) +",duration:1"// still not exist
+                             ",batteryLevel:" + String(voltageSensor.battery_level()) +",duration:1"// still not exist
                              + "|";
 
     connection.broadcastMsg(tankData + productionData + pumpAndValveData + electricityData);
