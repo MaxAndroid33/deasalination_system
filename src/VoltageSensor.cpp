@@ -39,3 +39,19 @@ float VoltageSensor::voltage_measured()
   
   return in_voltage;
 }
+
+int VoltageSensor::battery_level()
+{
+  float temp_voltage = round(this->in_voltage * 100.0) / 100.0; // take two decimal for example 10.50
+  return (temp_voltage <= 10.50) ? 0 :
+           (temp_voltage <= 11.31) ? 10 :
+           (temp_voltage <= 11.58) ? 20 :
+           (temp_voltage <= 11.75) ? 30 :
+           (temp_voltage <= 11.90) ? 40 :
+           (temp_voltage <= 12.06) ? 50 :
+           (temp_voltage <= 12.20) ? 60 :
+           (temp_voltage <= 12.32) ? 70 :
+           (temp_voltage <= 12.42) ? 80 :
+           (temp_voltage <= 12.50) ? 90 : 100;
+   
+}

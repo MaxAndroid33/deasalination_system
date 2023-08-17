@@ -26,7 +26,7 @@ public:
 VoltageSensor(int);
 void begin();
 float voltage_measured();
-
+int battery_level();
 
 };
 
