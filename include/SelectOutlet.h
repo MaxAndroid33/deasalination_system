@@ -47,6 +47,7 @@ public:
     String runPump(String type,boolean status);
     String getState(String type);
     int getBoolState(String type);
+    int getBoolState(int type);
 
 };
 

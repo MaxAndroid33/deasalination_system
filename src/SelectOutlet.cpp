@@ -103,6 +103,31 @@ int SelectOutlet::getBoolState(String type)
     }
     
 }
+int SelectOutlet::getBoolState(int type)
+{
+    switch (type)
+    {
+    case drink:
+        return (drinkValve.getState());
+        break;
+    case plant:
+        return (plantValve.getState());
+        break;
+    case plantpump:
+        return (plantPumpOut.getState());
+        break;
+    case drinkpump:
+        return (drinkPumpOut.getState());
+        break;
+    case innerpump:
+        return (inPump.getState());
+        break;
+    default:
+    return 3000;
+        break;
+    }
+    
+}
 
 int SelectOutlet::ConvertType(String type)
 {
