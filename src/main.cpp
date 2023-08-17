@@ -34,7 +34,13 @@ CurrentSensor currentSensor(2, CURRENT_PIN, 5);
 TankLevel tankPlant(tankPlant_TRIG_PIN, tankPlant_ECHO_PIN);
 TankLevel tankDrink(tankDrink_TRIG_PIN, tankDrink_ECHO_PIN);
 SelectOutlet out;
-
+enum objName
+{
+    LIVETANK,
+    ELECTRICITY,
+    PRODUCTION,
+    PUMPSANDVALVES,
+};
 unsigned long currentMillis = millis();
 unsigned long previousMillis = currentMillis;
 unsigned long current_millis = millis();
@@ -69,7 +75,6 @@ void loop()
 {
     permeate_flow.flowRate();
     concentrate_flow.flowRate();
-    
     control.moveServo();
     voltageSensor.voltage_measured();
     currentSensor.readCurrent();
@@ -170,26 +175,27 @@ void handleMessage(void *arg, uint8_t *data, size_t len)
 void updateMsg()
 {
     connection.broadcastIP();
-    connection.broadcastMsg("TDS:" + String(tds.measure()) +
-                            ",requireTDS:" + String(control.getTdsRequired()) +
-                            ",Angle:" + String(control.getPostion()) +
+
+    String tankData = String(LIVETANK) + "=port:0,level:" + String(tankPlant.tankLevelPresent()) +
+                      ",isFilling:" + String(tankPlant.status()) + "|" + String(LIVETANK) + "=port:1,level:" +
+                      String(tankDrink.tankLevelPresent()) +
+                      ",isFilling:" + String(tankDrink.status()) + "|";
+
+    String productionData = String(PRODUCTION) + "=tds:" + String(tds.measure()) +
                             ",temp:" + String(tds.temperatureMeasure()) +
-                            ",error:" + String(control.tds_error) +
-                            ",plant:" + String(out.getState("plant")) +
-                            ",drink:" + String(out.getState("drink")) +
-                            ",innerpump:" + String(out.getState("innerpump")) +
-                            ",plantpump:" + String(out.getState("plantpump")) +
-                            ",drinkpump:" + String(out.getState("drinkpump")) +
-                            ",PerFlow:" + String(permeate_flow.literPassed()) +
-                            ",ConFlow:" + String(concentrate_flow.literPassed()) +
-                            ",TotalFlow:" + String(permeate_flow.literPassed() + concentrate_flow.literPassed()) +
-                            ",KI:" + String((control.KI)*(control.tds_I) )+
-                            ",KD:" + String((control.KD)*(control.tds_d) ) +
-                            ",KP:" + String((control.KP)*(control.tds_error)) +
-                            ",reset:" +
-                            ",tankPlant:" + String(control.total_error)+
-                            ",tankDrink:" + String(tankDrink.tankLevelPresent()) +
-                            ",maxlevel:" + String(tankDrink.MaxLevel) +
-                            ",current:" + String(currentSensor.readCurrent()) +
-                            ",voltage:" + String(voltageSensor.voltage_measured()));
+                            ",preFlow:" + String(permeate_flow.literPassed()) +
+                            ",conFlow:" + String(concentrate_flow.literPassed()) + "|";
+
+    String pumpAndValveData = String(PUMPSANDVALVES) + "=innerpump:" + String(out.getBoolState("innerpump")) +
+                              ",plantpump:" + String(out.getBoolState("plantpump")) +
+                              ",drinkpump:" + String(out.getBoolState("drinkpump")) +
+                              ",plantvalve:" + String(out.getBoolState("plant")) +
+                              ",drinkvalve:" + String(out.getBoolState("drink")) + "|";
+
+    String electricityData = String(ELECTRICITY) + "=voltageIn:" + String(voltageSensor.voltage_measured()) +
+                             ",currentOut:" + String(currentSensor.readCurrent()) +",currentIn:0" +
+                             ",batteryLevel:" + String(0) +",duration:1"// still not exist
+                             + "|";
+
+    connection.broadcastMsg(tankData + productionData + pumpAndValveData + electricityData);
 }

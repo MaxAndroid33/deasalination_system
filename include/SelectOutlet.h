@@ -46,7 +46,7 @@ public:
     String openValve(String type,boolean status);
     String runPump(String type,boolean status);
     String getState(String type);
-     
+    int getBoolState(String type);
 
 };
 

@@ -4,5 +4,9 @@
         "*.tcc": "cpp",
         "random": "cpp",
         "regex": "cpp"
-    }
+    },
+    "cSpell.words": [
+        "drinkvalve",
+        "plantvalve"
+    ]
 }
