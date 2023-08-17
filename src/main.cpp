@@ -191,16 +191,14 @@ void updateMsg()
                               String(PLANTVALVE) + ":" + String(out.getBoolState(PLANTVALVE)) + "," +
                               String(DRINKVALVE) + ":" + String(out.getBoolState(DRINKVALVE)) + "|";
 
-    String powerData = String(POWER) + "=" + String(VOLTAGEIN) + String(voltageSensor.voltage_measured()) + "," +
+    String powerData = String(POWER) + "=" + 
+                       String(VOLTAGEIN)+ ":" + String(voltageSensor.voltage_measured()) + "," +
                        String(CURRENTIN) + ":0" + "," +
                        String(CURRENTOUT) + ":" + String(currentSensor.readCurrent()) + "," +
                        String(BATTERYLEVEL) + ":" + String(voltageSensor.battery_level()) + "," +
                        String(ISBATTERY) + ":1" + "," +
                        String(DURATION) + ":1" + "|";
-    String powerData = String(POWER) + "=voltageIn:" + String(voltageSensor.voltage_measured()) +
-                             ",currentOut:" + String(currentSensor.readCurrent()) +",currentIn:0" +
-                             ",batteryLevel:" + String(voltageSensor.battery_level()) +",duration:1"// still not exist
-                             + "|";
+  
 
     connection.broadcastMsg(tankData + productionData + pumpAndValveData + powerData);
 }
