@@ -171,11 +171,10 @@ void updateMsg()
     connection.broadcastIP();
 
     String tankData = String(LIVETANK) + "=" +
-                      String(PORT) + ":" + "0" + "," +
+                      String(PORT) + "0" + "," +
                       String(LEVEL) + ":" + String(tankPlant.tankLevelPresent()) + "," +
                       String(ISFILLING) + ":" + String(tankPlant.status()) + "|" +
-                      String(LIVETANK) + "=" + 
-                      String(PORT) + ":" + "1" + "," +
+                      String(LIVETANK) + "=" + String(PORT) + "1" + "," +
                       String(LEVEL) + ":" + String(tankDrink.tankLevelPresent()) + "," +
                       String(ISFILLING) + ":" + String(tankDrink.status()) + "|";
 
@@ -198,6 +197,10 @@ void updateMsg()
                        String(BATTERYLEVEL) + ":" + String(voltageSensor.battery_level()) + "," +
                        String(ISBATTERY) + ":1" + "," +
                        String(DURATION) + ":1" + "|";
+    String powerData = String(POWER) + "=voltageIn:" + String(voltageSensor.voltage_measured()) +
+                             ",currentOut:" + String(currentSensor.readCurrent()) +",currentIn:0" +
+                             ",batteryLevel:" + String(voltageSensor.battery_level()) +",duration:1"// still not exist
+                             + "|";
 
     connection.broadcastMsg(tankData + productionData + pumpAndValveData + powerData);
 }
