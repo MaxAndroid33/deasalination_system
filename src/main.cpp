@@ -171,10 +171,10 @@ void updateMsg()
     connection.broadcastIP();
 
     String tankData = String(LIVETANK) + "=" +
-                      String(PORT) + "0" + "," +
+                      String(PORT) + ":0" + "," +
                       String(LEVEL) + ":" + String(tankPlant.tankLevelPresent()) + "," +
                       String(ISFILLING) + ":" + String(tankPlant.status()) + "|" +
-                      String(LIVETANK) + "=" + String(PORT) + "1" + "," +
+                      String(LIVETANK) + "=" + String(PORT) + ":1" + "," +
                       String(LEVEL) + ":" + String(tankDrink.tankLevelPresent()) + "," +
                       String(ISFILLING) + ":" + String(tankDrink.status()) + "|";
 
