@@ -6,7 +6,7 @@
 #include <VoltageSensor.h>
 #include <CurrentSensor.h>
 #include <TankLevel.h>
-
+#include <DataPattern.h>
 #define TDS_PIN 35
 #define SERVO_PIN 26
 #define FLOWMETER_PERMEATE_PIN 14
@@ -34,13 +34,7 @@ CurrentSensor currentSensor(2, CURRENT_PIN, 5);
 TankLevel tankPlant(tankPlant_TRIG_PIN, tankPlant_ECHO_PIN);
 TankLevel tankDrink(tankDrink_TRIG_PIN, tankDrink_ECHO_PIN);
 SelectOutlet out;
-enum objName
-{
-    LIVETANK,
-    ELECTRICITY,
-    PRODUCTION,
-    PUMPSANDVALVES,
-};
+
 unsigned long currentMillis = millis();
 unsigned long previousMillis = currentMillis;
 unsigned long current_millis = millis();
@@ -176,26 +170,34 @@ void updateMsg()
 {
     connection.broadcastIP();
 
-    String tankData = String(LIVETANK) + "=port:0,level:" + String(tankPlant.tankLevelPresent()) +
-                      ",isFilling:" + String(tankPlant.status()) + "|" + String(LIVETANK) + "=port:1,level:" +
-                      String(tankDrink.tankLevelPresent()) +
-                      ",isFilling:" + String(tankDrink.status()) + "|";
+    String tankData = String(LIVETANK) + "=" +
+                      String(PORT) + ":" + "0" + "," +
+                      String(LEVEL) + ":" + String(tankPlant.tankLevelPresent()) + "," +
+                      String(ISFILLING) + ":" + String(tankPlant.status()) + "|" +
+                      String(LIVETANK) + "=" + 
+                      String(PORT) + ":" + "1" + "," +
+                      String(LEVEL) + ":" + String(tankDrink.tankLevelPresent()) + "," +
+                      String(ISFILLING) + ":" + String(tankDrink.status()) + "|";
 
-    String productionData = String(PRODUCTION) + "=tds:" + String(tds.measure()) +
-                            ",temp:" + String(tds.temperatureMeasure()) +
-                            ",preFlow:" + String(permeate_flow.literPassed()) +
-                            ",conFlow:" + String(concentrate_flow.literPassed()) + "|";
+    String productionData = String(PRODUCTION) + "=" +
+                            String(TDS) + ":" + String(tds.measure()) + "," +
+                            String(TEMPERATURE) + ":" + String(tds.temperatureMeasure()) + "," +
+                            String(PREFLOW) + ":" + String(permeate_flow.flowRate()) + "," +
+                            String(CONFLOW) + ":" + String(concentrate_flow.flowRate()) + "|";
 
-    String pumpAndValveData = String(PUMPSANDVALVES) + "=innerpump:" + String(out.getBoolState("innerpump")) +
-                              ",plantpump:" + String(out.getBoolState("plantpump")) +
-                              ",drinkpump:" + String(out.getBoolState("drinkpump")) +
-                              ",plantvalve:" + String(out.getBoolState("plant")) +
-                              ",drinkvalve:" + String(out.getBoolState("drink")) + "|";
+    String pumpAndValveData = String(PUMPSANDVALVES) + "=" +
+                              String(MAINPUMP) + ":" + String(out.getBoolState(MAINPUMP)) + "," +
+                              String(PLANTPUMP) + ":" + String(out.getBoolState(PLANTPUMP)) + "," +
+                              String(DRINKPUMP) + ":" + String(out.getBoolState(DRINKPUMP)) + "," +
+                              String(PLANTVALVE) + ":" + String(out.getBoolState(PLANTVALVE)) + "," +
+                              String(DRINKVALVE) + ":" + String(out.getBoolState(DRINKVALVE)) + "|";
 
-    String electricityData = String(ELECTRICITY) + "=voltageIn:" + String(voltageSensor.voltage_measured()) +
-                             ",currentOut:" + String(currentSensor.readCurrent()) +",currentIn:0" +
-                             ",batteryLevel:" + String(voltageSensor.battery_level()) +",duration:1"// still not exist
-                             + "|";
+    String powerData = String(POWER) + "=" + String(VOLTAGEIN) + String(voltageSensor.voltage_measured()) + "," +
+                       String(CURRENTIN) + ":0" + "," +
+                       String(CURRENTOUT) + ":" + String(currentSensor.readCurrent()) + "," +
+                       String(BATTERYLEVEL) + ":" + String(voltageSensor.battery_level()) + "," +
+                       String(ISBATTERY) + ":1" + "," +
+                       String(DURATION) + ":1" + "|";
 
-    connection.broadcastMsg(tankData + productionData + pumpAndValveData + electricityData);
+    connection.broadcastMsg(tankData + productionData + pumpAndValveData + powerData);
 }
