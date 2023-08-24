@@ -109,6 +109,6 @@ void Connection::broadcastIP()
 void Connection::broadcastMsg(String msg)
 {
     message = msg;
-    Serial.println(message);
+    //Serial.println(message);
     websocket.textAll(message);
 }
