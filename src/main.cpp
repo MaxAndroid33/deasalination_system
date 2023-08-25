@@ -26,7 +26,6 @@
 const char *ssid = "import4G";
 const char *password = "max*!@.77013*!@";
 
-
 Connection connection(ssid, password);
 FlowSensor permeate_flow(FLOWMETER_PERMEATE_PIN, calibrationFactorValue);       // Permeate (purified water)
 FlowSensor concentrate_flow(FLOWMETER_CONCENTRATE_PIN, calibrationFactorValue); // concentrate
@@ -53,7 +52,7 @@ String data;
 void setup()
 {
     Serial.begin(115200);
-    connection.setup(handleMessage,false);
+    connection.setup(handleMessage, false);
 
     permeate_flow.begin();
     concentrate_flow.begin();
@@ -79,6 +78,11 @@ void setup()
 
 void loop()
 {
+    if (!out.getBoolState("innerpump") && tankDrink.status() && !out.getBoolState("drink"))
+        out.runPump("innerpump", true); // (false Means "On" , True means "OFF")
+    if (!out.getBoolState("innerpump") && tankPlant.status() && !out.getBoolState("plant"))
+        out.runPump("innerpump", true); // (false Means "On" , True means "OFF")
+
     permeate_flow.flowRate();
     concentrate_flow.flowRate();
     control.moveServo();
@@ -86,7 +90,7 @@ void loop()
     currentSensor.readCurrent();
     tankPlant.monitor();
     tankDrink.monitor();
-    tds.measure();  
+    tds.measure();
     connection.update();
 
     updateFastMsg();
