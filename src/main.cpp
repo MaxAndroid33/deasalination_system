@@ -78,10 +78,13 @@ void setup()
 
 void loop()
 {
-    if (!out.getBoolState("innerpump") && tankDrink.status() && !out.getBoolState("drink"))
+    if (!out.getBoolState(MAINPUMP) && tankDrink.status() && !out.getBoolState(DRINKVALVE))
         out.runPump("innerpump", true); // (false Means "On" , True means "OFF")
-    if (!out.getBoolState("innerpump") && tankPlant.status() && !out.getBoolState("plant"))
+    if (!out.getBoolState(MAINPUMP) && tankPlant.status() && !out.getBoolState(PLANTVALVE))
         out.runPump("innerpump", true); // (false Means "On" , True means "OFF")
+    if(tankDrink.isTankEmpty()) out.runPump("drinkpump",true);
+    if(tankPlant.isTankEmpty()) out.runPump("plantpump",true);
+    
 
     permeate_flow.flowRate();
     concentrate_flow.flowRate();
@@ -189,11 +192,11 @@ void updateMsg()
 
     String tankData = String(LIVETANK) + "=" +
                       String(PORT) + ":1" + "," +
-                      String(LEVEL) + ":" + String(tankPlant.tankLevelPresent()) + "," +
-                      String(ISFILLING) + ":" + String(tankPlant.status()) + "|" +
-                      String(LIVETANK) + "=" + String(PORT) + ":2" + "," +
                       String(LEVEL) + ":" + String(tankDrink.tankLevelPresent()) + "," +
-                      String(ISFILLING) + ":" + String(tankDrink.status()) + "|";
+                      String(ISFILLING) + ":" + String(int(tankDrink.status())) + "|" +
+                      String(LIVETANK) + "=" + String(PORT) + ":2" + "," +
+                      String(LEVEL) + ":" + String(tankPlant.tankLevelPresent()) + "," +
+                      String(ISFILLING) + ":" + String(int(tankPlant.status())) + "|";
 
     String pumpAndValveData = String(PUMPSANDVALVES) + "=" +
                               String(MAINPUMP) + ":" + String(out.getBoolState(MAINPUMP)) + "," +

@@ -61,3 +61,9 @@ bool TankLevel::status()
     return state; //Tank if Full return 'True' ,if Low retturn 'False'
     
 }
+
+bool TankLevel::isTankEmpty()
+{
+    if(tankLevelPresent() <5) return true;
+    else return false;
+}

@@ -18,6 +18,7 @@ class TankLevel
     long duration;
     bool state = false;
     unsigned long current_millis = millis();
+    
 
 
 public:
@@ -30,6 +31,7 @@ public:
     float tankLevelPresent();
     long monitor();
     bool status();
+    bool isTankEmpty();
 };
 
 #endif // __TANKLEVEL_H__
