@@ -212,11 +212,11 @@ void updateFastMsg()
 {
     static int fastInterval = millis();
 
-    if ((millis() - fastInterval) > 100)
+    if ((millis() - fastInterval) > 300)
     {
 
         data = "";
-        if (out.getBoolState(MAINPUMP) || out.getBoolState(DRINKPUMP))
+        if (!out.getBoolState(MAINPUMP) || !out.getBoolState(DRINKPUMP))
         {
             data += String(LIVETANK) + "=" +
                     String(PORT) + ":1," +
@@ -224,7 +224,7 @@ void updateFastMsg()
                     String(ISFILLING) + ":" + String(tankPlant.status()) + "|";
         }
 
-        if (out.getBoolState(MAINPUMP) || out.getBoolState(PLANTPUMP))
+        if (!out.getBoolState(MAINPUMP) || !out.getBoolState(PLANTPUMP))
         {
             data += String(LIVETANK) + "=" +
                     String(PORT) + ":2," +
@@ -232,7 +232,7 @@ void updateFastMsg()
                     String(ISFILLING) + ":" + String(tankDrink.status()) + "|";
         }
 
-        if (out.getBoolState(MAINPUMP))
+        if (!out.getBoolState(MAINPUMP))
         {
             data += String(PRODUCTION) + "=" +
                     // String(TDS) + ":" + String((int(millis() / 500) + 10000) % 10000) + "," +
@@ -245,8 +245,7 @@ void updateFastMsg()
 
         if (data.length())
             connection.broadcastMsg(data);
-
+        
         fastInterval = millis();
-        Serial.println(fastInterval);
     }
 }
